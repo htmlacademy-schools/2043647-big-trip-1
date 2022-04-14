@@ -14,7 +14,7 @@ const POINT_COUNT = 10;
 const point = Array.from({length: POINT_COUNT}, generatePoint);
 
 const mainElement = document.querySelector('.trip-main');
-const menuElement = document.querySelector('.trip-controls__navigation')
+const menuElement = document.querySelector('.trip-controls__navigation');
 const filtersElement = document.querySelector('.trip-controls__filters');
 const sortElement = document.querySelector('.trip-events');
 
@@ -30,5 +30,5 @@ renderTemplate (eventElement, createAddTripEvent(point[0]), RenderPosition.BEFOR
 renderTemplate (eventElement, createEditTripEvent(point[0]), RenderPosition.BEFOREEND);
 
 for (let i = 1; i < POINT_COUNT; i++) {
-    renderTemplate(eventElement, createContentItemsTemplate(point[i]), RenderPosition.BEFOREEND);
+  renderTemplate(eventElement, createContentItemsTemplate(point[i]), RenderPosition.BEFOREEND);
 }
