@@ -1,6 +1,7 @@
-import dayjs from "dayjs";
+import dayjs from 'dayjs';
+import {createElement} from '../render';
 
-export const createAddTripEvent = (tripAddEvent) => {
+const createAddTripEvent = (tripAddEvent) => {
   const {cities, types, description, photo, startDate, endDate, offers} = tripAddEvent;
 
   const templateDateBegin = dayjs(startDate).format('DD/MM/YY HH:mm');
@@ -132,3 +133,28 @@ export const createAddTripEvent = (tripAddEvent) => {
       </form>
     </li>`;
 };
+
+export default class AddNewPointView {
+  #element = null;
+  #event = null;
+
+  constructor(event) {
+    this.#event = event;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createAddTripEvent(this.#event);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
