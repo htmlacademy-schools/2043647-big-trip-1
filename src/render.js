@@ -1,8 +1,8 @@
 export const RenderPosition = {
-    BEFOREBEGIN: 'beforebegin',
-    AFTERBEGIN: 'afterbegin',
-    BEFOREEND: 'beforeend',
-    AFTEREND: 'afterend',
+  BEFOREBEGIN: 'beforebegin',
+  AFTERBEGIN: 'afterbegin',
+  BEFOREEND: 'beforeend',
+  AFTEREND: 'afterend',
 };
 
 export const render = (container, element, place) => {

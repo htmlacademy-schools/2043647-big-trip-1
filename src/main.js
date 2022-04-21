@@ -42,7 +42,7 @@ const renderEvent = (eventListElement, event) => {
   });
 
   editComponent.element.querySelector('form').addEventListener('submit', (evt) => {
-    evt.preventDefault()
+    evt.preventDefault();
     replaceFormToItem();
   });
 
