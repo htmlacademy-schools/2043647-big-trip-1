@@ -1,6 +1,7 @@
-import dayjs from "dayjs";
+import dayjs from 'dayjs';
+import {createElement} from '../render';
 
-export const createContentItemsTemplate = (point) => {
+const createContentItemsTemplate = (point) => {
   const {types, cities, price, offers, startDate, endDate, isFavorite, duration} = point;
 
   const dateDayMonth = dayjs(startDate).format('D MMM');
@@ -75,3 +76,28 @@ export const createContentItemsTemplate = (point) => {
   </div>
 </li>`;
 };
+
+export default class ContentItemView {
+  #element = null;
+  #event = null;
+
+  constructor(event) {
+    this.#event = event;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createContentItemsTemplate(this.#event);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
