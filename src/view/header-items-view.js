@@ -12,10 +12,10 @@ const createHeaderItemsTemplate = () => (
       Total: &euro;&nbsp;<span class="trip-info__cost-value">1230</span>
     </p>
   </section>`
-  );
+);
 
-  export default class HeaderView extends AbstractView{
-    get template() {
-      return createHeaderItemsTemplate();
-    }
+export default class HeaderView extends AbstractView{
+  get template() {
+    return createHeaderItemsTemplate();
   }
+}
