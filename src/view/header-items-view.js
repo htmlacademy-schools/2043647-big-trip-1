@@ -1,4 +1,4 @@
-import {createElement} from '../render';
+import AbstractView from './abstract-view';
 
 const createHeaderItemsTemplate = () => (
   `<section class="trip-main__trip-info  trip-info">
@@ -14,22 +14,8 @@ const createHeaderItemsTemplate = () => (
   </section>`
   );
 
-  export default class HeaderView {
-    #element = null;
-
-    get element() {
-      if (!this.#element){
-        this.#element = createElement(this.template);
-      }
-
-      return this.#element;
-    }
-
-    get template(){
+  export default class HeaderView extends AbstractView{
+    get template() {
       return createHeaderItemsTemplate();
-    }
-
-    removeElement(){
-      this.#element = null;
     }
   }

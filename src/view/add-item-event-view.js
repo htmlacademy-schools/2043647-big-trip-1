@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import {createElement} from '../render';
+import AbstractView from './abstract-view';
 
 const createAddTripEvent = (tripAddEvent) => {
   const {cities, types, description, photo, startDate, endDate, offers} = tripAddEvent;
@@ -134,27 +134,15 @@ const createAddTripEvent = (tripAddEvent) => {
     </li>`;
 };
 
-export default class AddNewPointView {
-  #element = null;
-  #event = null;
+export default class AddNewPointView extends AbstractView{
+  #wayPoint = null;
 
-  constructor(event) {
-    this.#event = event;
+  constructor(wayPoint) {
+    super();
+    this.#wayPoint = wayPoint;
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  get template() {
-    return createAddTripEvent(this.#event);
-  }
-
-  removeElement() {
-    this.#element = null;
+  get template(){
+    return createAddTripEvent(this.#wayPoint);
   }
 }

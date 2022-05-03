@@ -43,15 +43,15 @@ const renderEvent = (eventListElement, event) => {
     }
   };
 
-  itemComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+  itemComponent.setEditClickHandler(() => {
     replaceItemToForm();
     document.addEventListener('keydown', onEscKeyDown);
   });
-  editComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+  editComponent.setRollupClickHandler(() => {
     replaceFormToItem();
+    document.addEventListener('keydown', onEscKeyDown);
   });
-  editComponent.element.querySelector('form').addEventListener('submit', (evt) => {
-    evt.preventDefault();
+  editComponent.setFormSubmit(() => {
     replaceFormToItem();
     document.removeEventListener('keydown', onEscKeyDown);
   });

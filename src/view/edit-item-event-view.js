@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import {createElement} from '../render';
+import AbstractView from './abstract-view';
 
 const createEditTripEvent = (tripEditEvent) => {
   const {cities, types, description, price, startDate, endDate, offers} = tripEditEvent;
@@ -172,27 +172,35 @@ const createEditTripEvent = (tripEditEvent) => {
 </li>`;
 };
 
-export default class EditPointView {
-  #element = null;
-  #event = null;
+export default class EditPointView extends AbstractView{
+  #point = null;
 
-  constructor(event) {
-    this.#event = event;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
+  constructor(point) {
+    super();
+    this.#point = point;
   }
 
   get template() {
-    return createEditTripEvent(this.#event);
+    return createEditTripEvent(this.#point);
   }
 
-  removeElement() {
-    this.#element = null;
+  setFormSubmit = (callback) => {
+    this._callback.formSubmit = callback;
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+  }
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  }
+
+  setRollupClickHandler = (callback) => {
+    this._callback.rollupClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
+  }
+
+  #rollupClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.rollupClick();
   }
 }
