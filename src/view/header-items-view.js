@@ -1,4 +1,4 @@
-import {createElement} from '../render';
+import AbstractView from './abstract-view';
 
 const createHeaderItemsTemplate = () => (
   `<section class="trip-main__trip-info  trip-info">
@@ -12,24 +12,10 @@ const createHeaderItemsTemplate = () => (
       Total: &euro;&nbsp;<span class="trip-info__cost-value">1230</span>
     </p>
   </section>`
-  );
+);
 
-  export default class HeaderView {
-    #element = null;
-
-    get element() {
-      if (!this.#element){
-        this.#element = createElement(this.template);
-      }
-
-      return this.#element;
-    }
-
-    get template(){
-      return createHeaderItemsTemplate();
-    }
-
-    removeElement(){
-      this.#element = null;
-    }
+export default class HeaderView extends AbstractView{
+  get template() {
+    return createHeaderItemsTemplate();
   }
+}
