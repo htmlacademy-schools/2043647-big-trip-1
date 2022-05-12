@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import {nanoid} from 'nanoid';
 
 const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -150,6 +151,7 @@ const generatePrice = () => getRandomInteger(20, 240);
 export const generatePoint = () => {
   const dates = generateBeginEndDates();
   return {
+    id: nanoid(),
     startDate: dates.start,
     endDate: dates.end,
     duration: countDuration(dates.start, dates.end),
