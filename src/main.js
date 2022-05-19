@@ -1,6 +1,5 @@
 import MenuView from './view/menu-view';
 import FilterView from './view/filter-view';
-import HeaderView from './view/header-items-view';
 import {render, RenderPosition} from './render.js';
 import {generatePoint} from './mock/point';
 import TripPresenter from './presenter/trip-presenter';

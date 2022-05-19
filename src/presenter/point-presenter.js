@@ -4,7 +4,7 @@ import { render, RenderPosition, replace, remove } from "../render";
 
 const Mode = {
   DEFAULT: 'DEFAULT',
-  EDITING: 'EDITING',
+  EDITING: 'EDITING'
 };
 
 export default class PointPresenter {
@@ -26,34 +26,32 @@ export default class PointPresenter {
 
   init = (tripPoint) => {
     this.#tripPoint = tripPoint;
+    const prevPointItemComponent = this.#pointItemComponent;
+    const prevPointEditComponent = this.#pointEditComponent;
 
-    const prevItemComponent = this.#pointItemComponent;
-    const prevEditComponent = this.#pointEditComponent;
-
-    this.#pointItemComponent = new ContentItemView(tripPoint);
+    this.#pointItemComponent =  new ContentItemView(tripPoint);
     this.#pointEditComponent = new EditPointView(tripPoint);
 
     this.#pointItemComponent.setEditClickHandler(this.#handleEditClick);
     this.#pointItemComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
     this.#pointEditComponent.setRollupClickHandler(this.#handleRollupClick);
-    this.#pointEditComponent.setFormSubmit(this.#handleFormSubmit);
+    this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
 
-    if (prevItemComponent === null || prevEditComponent === null) {
+    if (prevPointItemComponent === null || prevPointEditComponent === null) {
       render(this.#tripPointsListElement, this.#pointItemComponent, RenderPosition.BEFOREEND);
       return;
     }
 
-
     if (this.#mode === Mode.DEFAULT) {
-      replace(this.#pointItemComponent, prevItemComponent);
+      replace(this.#pointItemComponent, prevPointItemComponent);
     }
 
     if (this.#mode === Mode.EDITING) {
-      replace(this.#pointEditComponent, prevEditComponent);
+      replace(this.#pointEditComponent, prevPointEditComponent);
     }
 
-    remove(prevItemComponent);
-    remove(prevEditComponent);
+    remove(prevPointItemComponent);
+    remove(prevPointEditComponent);
   }
 
   destroy = () => {
@@ -63,6 +61,7 @@ export default class PointPresenter {
 
   resetView = () => {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#pointEditComponent.reset(this.#tripPoint);
       this.#replaceFormToItem();
     }
   }
@@ -83,24 +82,26 @@ export default class PointPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
+      this.#pointEditComponent.reset(this.#tripPoint);
       this.#replaceFormToItem();
     }
-  };
+  }
 
   #handleEditClick = () => {
     this.#replaceItemToForm();
-  };
+  }
 
   #handleRollupClick = () => {
+    this.#pointEditComponent.reset(this.#tripPoint);
     this.#replaceFormToItem();
-  };
+  }
 
   #handleFavoriteClick = () => {
-    this.#changeData({ ...this.#tripPoint, isFavorite: !this.#tripPoint.isFavorite });
+    this.#changeData({...this.#tripPoint, isFavorite: !this.#tripPoint.isFavorite});
   }
 
   #handleFormSubmit = (point) => {
     this.#changeData(point);
     this.#replaceFormToItem();
-  };
+  }
 }

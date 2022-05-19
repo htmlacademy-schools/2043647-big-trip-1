@@ -5,7 +5,7 @@ import { render, RenderPosition } from "../render";
 import PointPresenter from "./point-presenter";
 import { updateItem } from "../utils/common";
 import { SortType } from "../const";
-import { sortPointDay, sortPointPrice, sortPointDuration } from "../utils/sort";
+import { sortTaskByDay, sortTaskByPrice, sortTaskByDuration } from "../utils/sort";
 
 export default class TripPresenter {
   #mainElement = null;
@@ -53,13 +53,13 @@ export default class TripPresenter {
   #sortTasks = (sortType) => {
     switch (sortType) {
       case SortType.SORT_DAY:
-        this.#point.sort(sortPointDay);
+        this.#point.sort(sortTaskByDay);
         break;
       case SortType.SORT_TIME:
-        this.#point.sort(sortPointDuration);
+        this.#point.sort(sortTaskByDuration);
         break;
       case SortType.SORT_PRICE:
-        this.#point.sort(sortPointPrice);
+        this.#point.sort(sortTaskByPrice);
         break;
       default:
         this.#point = [...this.#sourcedTripPoints];
