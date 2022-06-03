@@ -31,16 +31,16 @@ const generatePrice = () => getRandomInteger(20, 240);
 
 export const generatePoint = () => {
   const dates = generateDates();
-  const locationArray = destinations();
-  const pointArray = offers();
+  const destinationArray = destinations();
+  const offerArray = offers();
   return {
     id: nanoid(),
     dateFrom: dates.from,
     dateTo: dates.to,
-    events: pointArray,
-    destination: locationArray[getRandomInteger(0, locationArray.length-1)],
+    offers: offerArray,
+    destination: destinationArray[getRandomInteger(0, destinationArray.length-1)],
     basePrice: generatePrice(),
-    type: pointArray[getRandomInteger(0, pointArray.length-1)].type,
+    type: offerArray[getRandomInteger(0, offerArray.length-1)].type,
     isFavorite: Boolean(getRandomInteger(0, 1))
   };
 };
