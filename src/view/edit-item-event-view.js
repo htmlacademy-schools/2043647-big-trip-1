@@ -1,26 +1,23 @@
-import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
+import he from 'he';
 import SmartView from './smart-view';
 import { destinations } from '../mock/destinations';
 import { offers } from '../mock/offers';
-import { createOffersTemplateMarkup, createTypesMarkup } from '../utils/forms';
+import { createOffersSectionMarkup, createPointTypesMarkup } from '../utils/forms';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const createPointEditTemplate = (point) => {
 
-  const {basePrice: price, dateFrom: ISOFrom, dateTo: ISOTo, destination, type} = point;
-
-  const timeFrom = dayjs(ISOFrom).format('DD/MM/YY HH:mm ');
-  const timeTo = dayjs(ISOTo).format('DD/MM/YY HH:mm');
+  const {basePrice: price, destination, type} = point;
 
   const pointTypeLabel = type.charAt(0).toUpperCase() + type.slice(1);
 
-  const pointTypesMarkup = createTypesMarkup(offers(), type);
-  const locationOptions = destinations().map((x) => (`<option value="${x.name}"></option>`)).join('');
+  const pointTypesMarkup = createPointTypesMarkup(offers(), type);
+  const destinationOptions = destinations().map((x) => (`<option value="${x.name}"></option>`)).join('');
 
-  const photosMarkup = destination.pictures.map((x) => (`<img className="event__photo" src="${x.src}" alt="${x.description}">`)).join('');
+  const photosMarkup = destination.pictures.map((x) => (`<img class="event__photo" src="${x.src}" alt="${x.description}">`)).join('');
 
-  const editedOffersMarkup = createOffersTemplateMarkup(offers(), type);
+  const editedOffersMarkup = createOffersSectionMarkup(offers(), type);
 
   return `<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
@@ -42,24 +39,24 @@ const createPointEditTemplate = (point) => {
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${pointTypeLabel}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destination.name)}" list="destination-list-1">
                     <datalist id="destination-list-1">
-                      ${locationOptions}
+                      ${destinationOptions}
                     </datalist>
                   </div>
                   <div class="event__field-group  event__field-group--time">
                     <label class="visually-hidden" for="event-start-time-1">From</label>
-                    <input class="event__input  event__input--time event__input-start-time" id="event-start-time-1" type="text" name="event-start-time" value="${timeFrom}">
+                    <input class="event__input  event__input--time event__input-start-time" id="event-start-time-1" type="text" name="event-start-time" value="">
                     —
                     <label class="visually-hidden" for="event-end-time-1">To</label>
-                    <input class="event__input  event__input--time event__input-end-time" id="event-end-time-1" type="text" name="event-end-time" value="${timeTo}">
+                    <input class="event__input  event__input--time event__input-end-time" id="event-end-time-1" type="text" name="event-end-time" value="">
                   </div>
                   <div class="event__field-group  event__field-group--price">
                     <label class="event__label" for="event-price-1">
                       <span class="visually-hidden">Price</span>
                       €
                     </label>
-                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${he.encode(price.toString())}">
                   </div>
                   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
                   <button class="event__reset-btn" type="reset">Delete</button>
@@ -90,7 +87,6 @@ export default class PointEditView extends SmartView {
   constructor(point) {
     super();
     this._data = PointEditView.parsePointToData(point);
-
     this.#setInnerHandlers();
     this.#setDatepicker();
   }
@@ -116,7 +112,7 @@ export default class PointEditView extends SmartView {
     this.updateData(
       PointEditView.parsePointToData(point),
     );
-  }
+  };
 
   #setDatepicker = () => {
     this.#datepickerFrom = flatpickr(
@@ -156,6 +152,7 @@ export default class PointEditView extends SmartView {
     this.#setDatepicker();
     this.setRollupClickHandler(this._callback.rollupClick);
     this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
   #setInnerHandlers = () => {
@@ -163,10 +160,6 @@ export default class PointEditView extends SmartView {
       .addEventListener('change', this.#typeGroupClickHandler);
     this.element.querySelector('.event__input--destination')
       .addEventListener('change', this.#destinationChangeHandler);
-    this.element.querySelector('.event__input-start-time')
-      .addEventListener('change', this.#startTimeChangeHandler);
-    this.element.querySelector('.event__input-end-time')
-      .addEventListener('change', this.#endTimeChangeHandler);
     this.element.querySelector('.event__input--price')
       .addEventListener('change', this.#basePriceChangeHandler);
   }
@@ -185,20 +178,6 @@ export default class PointEditView extends SmartView {
     }, false);
   }
 
-  #startTimeChangeHandler = (evt) => {
-    evt.preventDefault();
-    this.updateData({
-      dateFrom: evt.target.value
-    }, true);
-  }
-
-  #endTimeChangeHandler = (evt) => {
-    evt.preventDefault();
-    this.updateData({
-      dateTo: evt.target.value
-    }, true);
-  }
-
   #basePriceChangeHandler = (evt) => {
     evt.preventDefault();
     this.updateData({
@@ -210,6 +189,7 @@ export default class PointEditView extends SmartView {
     this._callback.rollupClick = callback;
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
   }
+
   #rollupClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.rollupClick();
@@ -222,32 +202,38 @@ export default class PointEditView extends SmartView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit();
-    this._callback.formSubmit(this._data);
     this._callback.formSubmit(PointEditView.parseDataToPoint(this._data));
   }
 
-  static parsePointToData = (point) => ({...point,
+  setDeleteClickHandler = (callback) => {
+    this._callback.deleteClick = callback;
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
+  }
+
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.deleteClick(PointEditView.parseDataToPoint(this._data));
+  }
+
+  static parsePointToData = (point) => ({
+    ...point,
   });
 
   static parseDataToPoint = (data) => {
-    const point = {...data};
-
+    const point = { ...data };
     return point;
   }
 
   #getChangedDestination = (destinationName) => {
     const allDestinations = destinations();
-
     for (let i = 0; i < allDestinations.length; i++) {
       if (allDestinations[i].name === destinationName) {
         return allDestinations[i];
       }
     }
-
     return {
-      'name': '',
       'description': null,
+      'name': '',
       'pictures': []
     };
   };

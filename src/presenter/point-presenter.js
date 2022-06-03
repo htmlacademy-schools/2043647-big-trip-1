@@ -1,6 +1,8 @@
-import ContentItemView from "../view/content-items-view";
 import EditPointView from "../view/edit-item-event-view";
+import PointView from "../view/content-items-view";
 import { render, RenderPosition, replace, remove } from "../render";
+import { UpdateType, UserAction } from "../const";
+import {isDatesEqual} from '../utils/common';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -29,16 +31,18 @@ export default class PointPresenter {
     const prevPointItemComponent = this.#pointItemComponent;
     const prevPointEditComponent = this.#pointEditComponent;
 
-    this.#pointItemComponent =  new ContentItemView(tripPoint);
+    this.#pointItemComponent =  new PointView(tripPoint);
     this.#pointEditComponent = new EditPointView(tripPoint);
 
     this.#pointItemComponent.setEditClickHandler(this.#handleEditClick);
     this.#pointItemComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
     this.#pointEditComponent.setRollupClickHandler(this.#handleRollupClick);
     this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
+    this.#pointEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
 
     if (prevPointItemComponent === null || prevPointEditComponent === null) {
       render(this.#tripPointsListElement, this.#pointItemComponent, RenderPosition.BEFOREEND);
+
       return;
     }
 
@@ -97,11 +101,32 @@ export default class PointPresenter {
   }
 
   #handleFavoriteClick = () => {
-    this.#changeData({...this.#tripPoint, isFavorite: !this.#tripPoint.isFavorite});
+    this.#changeData(
+      UserAction.UPDATE_EVENT,
+      UpdateType.MINOR,
+      { ...this.#tripPoint, isFavorite: !this.#tripPoint.isFavorite },
+    );
   }
 
-  #handleFormSubmit = (point) => {
-    this.#changeData(point);
+  #handleFormSubmit = (update) => {
+    const isMinorUpdate =
+      !isDatesEqual(this.#tripPoint.dateFrom, update.dateFrom) ||
+      !isDatesEqual(this.#tripPoint.dateTo, update.dateTo)||
+      (this.#tripPoint.basePrice !== update.basePrice);
+
+    this.#changeData(
+      UserAction.UPDATE_EVENT,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      update,
+    );
     this.#replaceFormToItem();
+  };
+
+  #handleDeleteClick = (event) => {
+    this.#changeData(
+      UserAction.DELETE_EVENT,
+      UpdateType.MINOR,
+      event,
+    );
   }
 }
